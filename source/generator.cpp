@@ -67,6 +67,8 @@ void generator::generate_n(const sf::Vector2u & maxsize, long unsigned long int 
 				return {0, maxsize.y - 1};
 			case 3:
 				return {maxsize.x - 1, maxsize.y - 1};
+			default:  // impossible
+				return {};
 		}
 	};
 

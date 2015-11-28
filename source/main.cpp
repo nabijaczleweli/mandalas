@@ -135,6 +135,7 @@ int main() {
 						if(saveto)
 							window.capture().saveToFile(saveto);
 						break;
+					default:
 				}
 			}
 		}
