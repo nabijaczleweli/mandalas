@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.3)
 
 project(mandalas CXX)
 
 add_subdirectory(external/SFML)
+
+set(BUILD_SHARED_LIBS FALSE CACHE BOOL "")
 
 file(GLOB_RECURSE source source/*.cpp)
 add_executable(mandalas ${source})
