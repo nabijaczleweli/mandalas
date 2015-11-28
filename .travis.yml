@@ -14,6 +14,7 @@ matrix:
             - libjpeg8-dev
             - libopenal-dev
             - libx11-xcb-dev
+            - libsndfile1-dev
             - libxcb-image0-dev
             - libxcb-randr0-dev
           sources: &sources
@@ -28,6 +29,7 @@ matrix:
             - libjpeg8-dev
             - libopenal-dev
             - libx11-xcb-dev
+            - libsndfile1-dev
             - libxcb-image0-dev
             - libxcb-randr0-dev
           sources: *sources
