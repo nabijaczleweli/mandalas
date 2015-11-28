@@ -1,8 +1,7 @@
 sudo: false
 language: generic
 
-cache:
-  apt: true
+cache: apt
 
 matrix:
   include:
@@ -11,10 +10,11 @@ matrix:
         apt:
           packages:
             - g++-5
+            - libudev-dev
+            - libjpeg8-dev
             - libx11-xcb-dev
             - libxcb-image0-dev
             - libxcb-randr0-dev
-            - libudev-dev
           sources: &sources
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise
@@ -23,10 +23,11 @@ matrix:
         apt:
           packages:
             - clang-3.8
+            - libudev-dev
+            - libjpeg8-dev
             - libx11-xcb-dev
             - libxcb-image0-dev
             - libxcb-randr0-dev
-            - libudev-dev
           sources: *sources
 
 before_script :
