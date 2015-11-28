@@ -12,6 +12,7 @@ matrix:
             - g++-5
             - libudev-dev
             - libjpeg8-dev
+            - libopenal-dev
             - libx11-xcb-dev
             - libxcb-image0-dev
             - libxcb-randr0-dev
@@ -25,6 +26,7 @@ matrix:
             - clang-3.8
             - libudev-dev
             - libjpeg8-dev
+            - libopenal-dev
             - libx11-xcb-dev
             - libxcb-image0-dev
             - libxcb-randr0-dev
