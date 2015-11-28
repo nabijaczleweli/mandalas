@@ -3,12 +3,12 @@
 	[
 		{
 			"name": "Build mandalas",
-			"shell_cmd": "ninja",
+			"shell_cmd": "ninja mandalas",
 			"working_dir": "${project_path}/build"
 		},
 		{
 			"name": "Configure mandalas",
-			"shell_cmd": "mkdir build && cd build && cmake .. -GNinja -DBUILD_SHARED_LIBS=FALSE",
+			"shell_cmd": "mkdir build && cd build && cmake .. -GNinja",
 			"working_dir": "${project_path}"
 		},
 		{
