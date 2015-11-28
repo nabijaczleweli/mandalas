@@ -129,13 +129,14 @@ int main() {
 					case Keyboard::Key::S:
 						if(!(Keyboard::isKeyPressed(Keyboard::Key::LControl) || Keyboard::isKeyPressed(Keyboard::Key::RControl)))
 							break;
-					case Keyboard::Key::Return:
+					case Keyboard::Key::Return: {
 						const auto saveto = tinyfd_saveFileDialog("Save the generated mandala to...", "mandala.png", 4,
 						                                          make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
 						if(saveto)
 							window.capture().saveToFile(saveto);
-						break;
+					} break;
 					default:
+						break;
 				}
 			}
 		}
