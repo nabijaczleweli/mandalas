@@ -1,7 +1,10 @@
 sudo: false
 language: generic
 
-cache: apt
+cache:
+  apt: true
+  directories:
+    - /tmp/tools
 
 matrix:
   include:
@@ -33,6 +36,16 @@ matrix:
             - libxcb-image0-dev
             - libxcb-randr0-dev
           sources: *sources
+
+before_install:
+  - export PATH="$HOME/bin:$PATH"
+  -
+  - mkdir ~/bin
+  - wget --no-check-certificate --no-clobber -O /tmp/tools/cmake https://cmake.org/files/v3.4/cmake-3.4.0-rc3-Linux-x86_64.sh || true
+  - chmod -R +x /tmp/tools
+
+install:
+  - /tmp/tools/cmake --prefix="$HOME" --exclude-subdir
 
 before_script :
   - mkdir build
