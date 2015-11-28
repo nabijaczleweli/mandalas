@@ -1,0 +1,12 @@
+*
+!source
+!source/**
+!external
+!external/**
+!.gitignore
+!.clang-format
+!LICENSE.md
+!README.md
+!CMakeLists.txt
+!.travis.yml
+!*.sublime-project

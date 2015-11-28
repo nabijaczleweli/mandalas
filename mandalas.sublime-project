@@ -1,0 +1,44 @@
+{
+	"build_systems":
+	[
+		{
+			"name": "Build mandalas",
+			"shell_cmd": "ninja",
+			"working_dir": "${project_path}/build"
+		},
+		{
+			"name": "Configure mandalas",
+			"shell_cmd": "mkdir build && cd build && cmake .. -GNinja",
+			"working_dir": "${project_path}"
+		},
+		{
+			"name": "Clean mandalas",
+			"shell_cmd": "rm -rf build",
+			"working_dir": "${project_path}",
+
+			"windows": {
+				"shell_cmd": "del/F/S/Q build && rmdir/S/Q build",
+			}
+		}
+	],
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"name": "Source",
+			"path": "source"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "Dependencies",
+			"path": "external"
+		},
+		{
+			"follow_symlinks": true,
+			"name": "Build scripts",
+			"path": ".",
+			"file_include_patterns": ["CMakeLists.txt"],
+			"folder_exclude_patterns": ["*"]
+		}
+	]
+}
