@@ -8,7 +8,7 @@
 		},
 		{
 			"name": "Configure mandalas",
-			"shell_cmd": "mkdir build && cd build && cmake .. -GNinja",
+			"shell_cmd": "mkdir build && cd build && cmake .. -GNinja -DBUILD_SHARED_LIBS=FALSE",
 			"working_dir": "${project_path}"
 		},
 		{

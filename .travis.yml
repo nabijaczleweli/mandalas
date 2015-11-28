@@ -52,5 +52,5 @@ before_script :
   - cd build
 
 script:
-  - cmake -G"Unix Makefiles" ..
+  - cmake -G"Unix Makefiles" .. -DBUILD_SHARED_LIBS=FALSE
   - make
