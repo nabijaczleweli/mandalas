@@ -26,5 +26,6 @@
 
 template <class T>
 auto distance(T && lhs, T && rhs) {
-	return sqrt(pow(lhs.x - rhs.x, 2.) + pow(lhs.y - rhs.y, 2.));  // Pythagoras' theorem
+	return sqrt(pow(static_cast<long double>(lhs.x) - static_cast<long double>(rhs.x), 2.) +
+	            pow(static_cast<long double>(lhs.y) - static_cast<long double>(rhs.y), 2.));  // Pythagoras' theorem
 }

@@ -26,18 +26,20 @@
 
 #include <SFML/Graphics.hpp>
 #include <random>
-#include <array>
+#include <vector>
 #include <tuple>
 
 
 class generator {
 private:
-	std::array<sf::Vertex, 3> past;
+	std::vector<sf::Vertex> past;
 	std::mt19937 rand;
 
 public:
 	generator();
 
+	void generate_n(const sf::Vector2u & maxsize, unsigned long long int n);
 	void generate_next(const sf::Vector2u & maxsize);
+	void draw_n(sf::RenderTarget & on, unsigned long long int n);
 	void draw_latest(sf::RenderTarget & on);
 };

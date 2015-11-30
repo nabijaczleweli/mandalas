@@ -25,32 +25,58 @@
 #include "util/math.hpp"
 #include "util/array.hpp"
 #include <algorithm>
+#include <iostream>
 
 
 using namespace sf;
 using namespace std;
 
 
-generator::generator() : rand(random_device{}()), past{} {}
+template <class Gen>
+static void gen(Gen && gen, mt19937 & rand, vector<Vertex> & past) {
+	auto && to   = gen(rand);
+	auto && prev = *(past.end() - 1);
+	Vector2f pos(prev.position.x - ((prev.position.x - to.x) / 2), prev.position.y - ((prev.position.y - to.y) / 2));
 
-void generator::generate_next(const sf::Vector2u & maxsize) {
-	uniform_int_distribution<unsigned int> distx(0, maxsize.x);
-	uniform_int_distribution<unsigned int> disty(0, maxsize.y);
-
-	Vector2f pos(distx(rand), disty(rand));
-
-	auto distances = make_array(distance(past[0].position, past[1].position), distance(past[1].position, past[2].position), distance(past[2].position, pos));
+	auto distances = make_array(distance((past.end() - 3)->position, (past.end() - 2)->position),
+	                            distance((past.end() - 2)->position, prev.position), distance(prev.position, pos));
 	sort(begin(distances), end(distances));
-	Color col(distances[0] * 0xFF, distances[1] * 0xFF, distances[2] * 0xFF);
+	Color col(0/*distances[0] * 0xFF*/, abs(0xFF - round((distances[0] / distances[2]) * 0xFF)), abs(0xFF - round((distances[1] / distances[2]) * 0xFF)));
 
-	Vertex newpoint(pos, col);
-
-	iter_swap(past.begin(), past.begin() + 1);
-	iter_swap(past.begin() + 1, past.begin() + 2);
-	iter_swap(past.begin() + 2, &newpoint);
+	past.emplace_back(pos, col);
 }
 
+generator::generator() : rand(random_device{}()), past(3) {}
+
+void generator::generate_next(const sf::Vector2u & maxsize) {
+	generate_n(maxsize, 1);
+}
+
+void generator::generate_n(const sf::Vector2u & maxsize, long unsigned long int n) {
+	const auto dist = [&](auto & rand) -> Vector2u {
+		uniform_int_distribution<unsigned int> d(0, 3);
+		switch(d(rand)) {
+			case 0:
+				return {0, 0};
+			case 1:
+				return {maxsize.x - 1, 0};
+			case 2:
+				return {0, maxsize.y - 1};
+			case 3:
+				return {maxsize.x - 1, maxsize.y - 1};
+		}
+	};
+
+	past.reserve(past.capacity() + n);
+
+	for(auto i = 0ull; i < n; ++i)
+		gen(dist, rand, past);
+}
+
+void generator::draw_n(sf::RenderTarget & on, unsigned long long int n) {
+	on.draw(&*(past.end() - n - 1), n, PrimitiveType::Points);
+}
 
 void generator::draw_latest(RenderTarget & on) {
-	on.draw(past.end() - 1, 1, PrimitiveType::Points);
+	draw_n(on, 1);
 }

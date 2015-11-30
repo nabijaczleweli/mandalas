@@ -43,10 +43,61 @@ int main() {
 		while(window.pollEvent(event)) {
 			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
 				window.close();
+			else if(event.type == Event::KeyPressed) {
+				switch(event.key.code) {
+					case Keyboard::Key::Num1:
+					case Keyboard::Key::Numpad1:
+						gen.generate_n(window.getSize(), 10ull);
+						gen.draw_n(window, 10ull);
+						break;
+					case Keyboard::Key::Num2:
+					case Keyboard::Key::Numpad2:
+						gen.generate_n(window.getSize(), 100ull);
+						gen.draw_n(window, 100ull);
+						break;
+					case Keyboard::Key::Num3:
+					case Keyboard::Key::Numpad3:
+						gen.generate_n(window.getSize(), 1000ull);
+						gen.draw_n(window, 1000ull);
+						break;
+					case Keyboard::Key::Num4:
+					case Keyboard::Key::Numpad4:
+						gen.generate_n(window.getSize(), 10000ull);
+						gen.draw_n(window, 10000ull);
+						break;
+					case Keyboard::Key::Num5:
+					case Keyboard::Key::Numpad5:
+						gen.generate_n(window.getSize(), 100000ull);
+						gen.draw_n(window, 100000ull);
+						break;
+					case Keyboard::Key::Num6:
+					case Keyboard::Key::Numpad6:
+						gen.generate_n(window.getSize(), 1000000ull);
+						gen.draw_n(window, 1000000ull);
+						break;
+					case Keyboard::Key::Num7:
+					case Keyboard::Key::Numpad7:
+						gen.generate_n(window.getSize(), 10000000ull);
+						gen.draw_n(window, 10000000ull);
+						break;
+					case Keyboard::Key::Num8:
+					case Keyboard::Key::Numpad8:
+						gen.generate_n(window.getSize(), 100000000ull);
+						gen.draw_n(window, 100000000ull);
+						break;
+					case Keyboard::Key::Num9:
+					case Keyboard::Key::Numpad9:
+						gen.generate_n(window.getSize(), 1000000000ull);
+						gen.draw_n(window, 1000000000ull);
+						break;
+					case Keyboard::Key::Num0:
+					case Keyboard::Key::Numpad0:
+						gen.generate_n(window.getSize(), 10000000000ull);
+						gen.draw_n(window, 10000000000ull);
+						break;
+				}
+			}
 		}
-
-		gen.generate_next(window.getSize());
-		gen.draw_latest(window);
 
 		window.display();
 	}
