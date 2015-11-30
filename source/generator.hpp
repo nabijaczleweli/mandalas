@@ -21,33 +21,23 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+#pragma once
+
+
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <iostream>
-#include "util/video.hpp"
-#include "generator.hpp"
+#include <random>
+#include <array>
+#include <tuple>
 
 
-using namespace sf;
-using namespace std;
+class generator {
+private:
+	std::array<sf::Vertex, 3> past;
+	std::mt19937 rand;
 
+public:
+	generator();
 
-int main() {
-	RenderWindow window(max_square_video_mode(), "mandalas", Style::None);
-	window.clear();
-
-	generator gen;
-
-	while(window.isOpen()) {
-		Event event;
-		while(window.pollEvent(event)) {
-			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
-				window.close();
-		}
-
-		gen.generate_next(window.getSize());
-		gen.draw_latest(window);
-
-		window.display();
-	}
-}
+	void generate_next(const sf::Vector2u & maxsize);
+	void draw_latest(sf::RenderTarget & on);
+};

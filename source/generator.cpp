@@ -21,33 +21,36 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <iostream>
-#include "util/video.hpp"
 #include "generator.hpp"
+#include "util/math.hpp"
+#include "util/array.hpp"
+#include <algorithm>
 
 
 using namespace sf;
 using namespace std;
 
 
-int main() {
-	RenderWindow window(max_square_video_mode(), "mandalas", Style::None);
-	window.clear();
+generator::generator() : rand(random_device{}()), past{} {}
 
-	generator gen;
+void generator::generate_next(const sf::Vector2u & maxsize) {
+	uniform_int_distribution<unsigned int> distx(0, maxsize.x);
+	uniform_int_distribution<unsigned int> disty(0, maxsize.y);
 
-	while(window.isOpen()) {
-		Event event;
-		while(window.pollEvent(event)) {
-			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
-				window.close();
-		}
+	Vector2f pos(distx(rand), disty(rand));
 
-		gen.generate_next(window.getSize());
-		gen.draw_latest(window);
+	auto distances = make_array(distance(past[0].position, past[1].position), distance(past[1].position, past[2].position), distance(past[2].position, pos));
+	sort(begin(distances), end(distances));
+	Color col(distances[0] * 0xFF, distances[1] * 0xFF, distances[2] * 0xFF);
 
-		window.display();
-	}
+	Vertex newpoint(pos, col);
+
+	iter_swap(past.begin(), past.begin() + 1);
+	iter_swap(past.begin() + 1, past.begin() + 2);
+	iter_swap(past.begin() + 2, &newpoint);
+}
+
+
+void generator::draw_latest(RenderTarget & on) {
+	on.draw(past.end() - 1, 1, PrimitiveType::Points);
 }

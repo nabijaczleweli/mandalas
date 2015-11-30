@@ -21,33 +21,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <iostream>
-#include "util/video.hpp"
-#include "generator.hpp"
+#pragma once
 
 
-using namespace sf;
-using namespace std;
-
-
-int main() {
-	RenderWindow window(max_square_video_mode(), "mandalas", Style::None);
-	window.clear();
-
-	generator gen;
-
-	while(window.isOpen()) {
-		Event event;
-		while(window.pollEvent(event)) {
-			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
-				window.close();
-		}
-
-		gen.generate_next(window.getSize());
-		gen.draw_latest(window);
-
-		window.display();
-	}
+template <class T>
+auto distance(T && lhs, T && rhs) {
+	return sqrt(pow(lhs.x - rhs.x, 2.) + pow(lhs.y - rhs.y, 2.));  // Pythagoras' theorem
 }

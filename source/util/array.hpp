@@ -21,33 +21,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <iostream>
-#include "util/video.hpp"
-#include "generator.hpp"
+#include <type_traits>
+#include <utility>
+#include <array>
 
 
-using namespace sf;
-using namespace std;
-
-
-int main() {
-	RenderWindow window(max_square_video_mode(), "mandalas", Style::None);
-	window.clear();
-
-	generator gen;
-
-	while(window.isOpen()) {
-		Event event;
-		while(window.pollEvent(event)) {
-			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
-				window.close();
-		}
-
-		gen.generate_next(window.getSize());
-		gen.draw_latest(window);
-
-		window.display();
-	}
+template <class... T>
+std::array<std::common_type_t<T...>, sizeof...(T)> make_array(T &&... args) {
+	return {std::forward<T>(args)...};
 }

@@ -21,33 +21,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include <SFML/Graphics.hpp>
+#pragma once
+
+
 #include <SFML/Window.hpp>
-#include <iostream>
-#include "util/video.hpp"
-#include "generator.hpp"
 
 
-using namespace sf;
-using namespace std;
-
-
-int main() {
-	RenderWindow window(max_square_video_mode(), "mandalas", Style::None);
-	window.clear();
-
-	generator gen;
-
-	while(window.isOpen()) {
-		Event event;
-		while(window.pollEvent(event)) {
-			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
-				window.close();
-		}
-
-		gen.generate_next(window.getSize());
-		gen.draw_latest(window);
-
-		window.display();
-	}
-}
+sf::VideoMode max_square_video_mode();
