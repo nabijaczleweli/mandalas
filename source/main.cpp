@@ -21,9 +21,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+#include <tinyfiledialogs.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
+#include "util/array.hpp"
 #include "util/video.hpp"
 #include "generator.hpp"
 
@@ -39,6 +41,7 @@ int main() {
 	generator gen;
 
 	while(window.isOpen()) {
+		bool changed = false;
 		Event event;
 		while(window.pollEvent(event)) {
 			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
@@ -49,56 +52,76 @@ int main() {
 					case Keyboard::Key::Numpad1:
 						gen.generate_n(window.getSize(), 10ull);
 						gen.draw_n(window, 10ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num2:
 					case Keyboard::Key::Numpad2:
 						gen.generate_n(window.getSize(), 100ull);
 						gen.draw_n(window, 100ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num3:
 					case Keyboard::Key::Numpad3:
 						gen.generate_n(window.getSize(), 1000ull);
 						gen.draw_n(window, 1000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num4:
 					case Keyboard::Key::Numpad4:
 						gen.generate_n(window.getSize(), 10000ull);
 						gen.draw_n(window, 10000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num5:
 					case Keyboard::Key::Numpad5:
 						gen.generate_n(window.getSize(), 100000ull);
 						gen.draw_n(window, 100000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num6:
 					case Keyboard::Key::Numpad6:
 						gen.generate_n(window.getSize(), 1000000ull);
 						gen.draw_n(window, 1000000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num7:
 					case Keyboard::Key::Numpad7:
 						gen.generate_n(window.getSize(), 10000000ull);
 						gen.draw_n(window, 10000000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num8:
 					case Keyboard::Key::Numpad8:
 						gen.generate_n(window.getSize(), 100000000ull);
 						gen.draw_n(window, 100000000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num9:
 					case Keyboard::Key::Numpad9:
 						gen.generate_n(window.getSize(), 1000000000ull);
 						gen.draw_n(window, 1000000000ull);
+						changed = true;
 						break;
 					case Keyboard::Key::Num0:
 					case Keyboard::Key::Numpad0:
 						gen.generate_n(window.getSize(), 10000000000ull);
 						gen.draw_n(window, 10000000000ull);
+						changed = true;
+						break;
+					case Keyboard::Key::S:
+						if(!(Keyboard::isKeyPressed(Keyboard::Key::LControl) || Keyboard::isKeyPressed(Keyboard::Key::RControl)))
+							break;
+					case Keyboard::Key::Return:
+						const auto saveto =
+						    tinyfd_saveFileDialog("Save mandala to...", "mandala.png", 4, make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
+						if(saveto)
+							window.capture().saveToFile(saveto);
 						break;
 				}
 			}
 		}
 
-		window.display();
+		if(changed)
+			window.display();
 	}
 }
