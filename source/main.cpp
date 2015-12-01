@@ -24,7 +24,6 @@
 #include <tinyfiledialogs.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <iostream>
 #include "util/array.hpp"
 #include "util/video.hpp"
 #include "generator.hpp"
@@ -37,12 +36,31 @@ using namespace std;
 int main() {
 	RenderWindow window(max_square_video_mode(), "mandalas", Style::None);
 	window.clear();
+	Font inconsolata;
+	inconsolata.loadFromFile("assets/Inconsolata.otf");
+	window.draw(Text("Press 1-0 to generate 10^(n+1) [where n=number key's distance from the 1 key]\n"
+	                 "Press Enter to save the mandala\n"
+	                 "\n"
+	                 "Press any key to continue\n",
+	                 inconsolata, 15));
+	window.display();
+
+	Event event;
+	for(;;) {
+		window.waitEvent(event);
+		if(event.type == Event::KeyPressed)
+			break;
+		else if(event.type == Event::Closed) {
+			window.close();
+			break;
+		}
+	}
+	window.clear();
+	window.display();
 
 	generator gen;
-
 	while(window.isOpen()) {
 		bool changed = false;
-		Event event;
 		while(window.pollEvent(event)) {
 			if(event.type == Event::Closed || (event.type == Event::KeyPressed && event.key.code == Keyboard::Key::Escape))
 				window.close();
@@ -112,8 +130,8 @@ int main() {
 						if(!(Keyboard::isKeyPressed(Keyboard::Key::LControl) || Keyboard::isKeyPressed(Keyboard::Key::RControl)))
 							break;
 					case Keyboard::Key::Return:
-						const auto saveto =
-						    tinyfd_saveFileDialog("Save mandala to...", "mandala.png", 4, make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
+						const auto saveto = tinyfd_saveFileDialog("Save the generated mandala to...", "mandala.png", 4,
+						                                          make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
 						if(saveto)
 							window.capture().saveToFile(saveto);
 						break;

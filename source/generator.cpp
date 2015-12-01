@@ -25,7 +25,6 @@
 #include "util/math.hpp"
 #include "util/array.hpp"
 #include <algorithm>
-#include <iostream>
 
 
 using namespace sf;
@@ -38,15 +37,19 @@ static void gen(Gen && gen, mt19937 & rand, vector<Vertex> & past) {
 	auto && prev = *(past.end() - 1);
 	Vector2f pos(prev.position.x - ((prev.position.x - to.x) / 2), prev.position.y - ((prev.position.y - to.y) / 2));
 
-	auto distances = make_array(distance((past.end() - 3)->position, (past.end() - 2)->position),
-	                            distance((past.end() - 2)->position, prev.position), distance(prev.position, pos));
+	auto distances = make_array(distance((past.end() - 4)->position, (past.end() - 3)->position),  //
+	                            distance((past.end() - 3)->position, (past.end() - 2)->position),  //
+	                            distance((past.end() - 2)->position, prev.position),               //
+	                            distance(prev.position, pos));
 	sort(begin(distances), end(distances));
-	Color col(0/*distances[0] * 0xFF*/, abs(0xFF - round((distances[0] / distances[2]) * 0xFF)), abs(0xFF - round((distances[1] / distances[2]) * 0xFF)));
+	Color col(abs(0xFF - round((distances[0] / distances[3]) * 0xFF)),  //
+	          abs(0xFF - round((distances[1] / distances[3]) * 0xFF)),  //
+	          abs(0xFF - round((distances[2] / distances[3]) * 0xFF)));
 
 	past.emplace_back(pos, col);
 }
 
-generator::generator() : rand(random_device{}()), past(3) {}
+generator::generator() : rand(random_device{}()), past(4) {}
 
 void generator::generate_next(const sf::Vector2u & maxsize) {
 	generate_n(maxsize, 1);

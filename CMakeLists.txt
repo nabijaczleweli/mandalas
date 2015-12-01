@@ -15,3 +15,5 @@ target_include_directories(mandalas SYSTEM PUBLIC external/SFML/include)
 
 set(CXX_COMPILE_FLAGS ${CXX_COMPILE_FLAGS} -O3 -Wall -Wextra)
 set_property(TARGET mandalas PROPERTY CXX_STANDARD 14)
+
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})

@@ -1,6 +1,8 @@
 *
 !source
 !source/**
+!assets
+!assets/**
 !external
 !external/**
 !.gitignore
