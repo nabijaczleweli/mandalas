@@ -5,15 +5,24 @@ project(mandalas CXX C)
 add_subdirectory(external/SFML)
 
 file(GLOB_RECURSE tinyfiledialogssource external/tinyfiledialogs/source/*.c)
-add_library(tinyfiledialogs STATIC ${tinyfiledialogssource})
-target_include_directories(tinyfiledialogs PUBLIC external/tinyfiledialogs/include)
 
-file(GLOB_RECURSE source source/*.cpp)
-add_executable(mandalas ${source})
-target_link_libraries(mandalas sfml-graphics tinyfiledialogs)
-target_include_directories(mandalas SYSTEM PUBLIC external/SFML/include)
+file(GLOB_RECURSE allsource source/*.cpp)
+file(GLOB mainuisource source/main-gui.cpp source/main-tui.cpp)
+list(REMOVE_ITEM  allsource ${mainuisource})
+
+add_library(mandalas-lib STATIC ${allsource})
+target_include_directories(mandalas-lib SYSTEM PUBLIC external/SFML/include)
+set_property(TARGET mandalas-lib PROPERTY CXX_STANDARD 14)
+foreach(ui tui gui)
+	add_library(tinyfiledialogs-${ui} STATIC ${tinyfiledialogssource})
+	target_include_directories(tinyfiledialogs-${ui} PUBLIC external/tinyfiledialogs/include)
+
+	add_executable(mandalas-${ui} source/main-${ui}.cpp)
+	target_link_libraries(mandalas-${ui} mandalas-lib sfml-graphics tinyfiledialogs-${ui})
+	set_property(TARGET mandalas-${ui} PROPERTY CXX_STANDARD 14)
+endforeach(ui)
+target_compile_definitions(tinyfiledialogs-tui PUBLIC TINYFD_WIN_CONSOLE_ONLY)
 
 set(CXX_COMPILE_FLAGS ${CXX_COMPILE_FLAGS} -O3 -Wall -Wextra)
-set_property(TARGET mandalas PROPERTY CXX_STANDARD 14)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})

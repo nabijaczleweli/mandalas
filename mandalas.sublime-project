@@ -3,7 +3,7 @@
 	[
 		{
 			"name": "Build mandalas",
-			"shell_cmd": "ninja mandalas",
+			"shell_cmd": "ninja mandalas-gui mandalas-tui",
 			"working_dir": "${project_path}/build"
 		},
 		{

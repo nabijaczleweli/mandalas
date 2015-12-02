@@ -60,4 +60,4 @@ before_script :
 
 script:
   - cmake -G"Unix Makefiles" ..
-  - make mandalas
+  - make mandalas-gui mandalas-tui

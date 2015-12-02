@@ -49,7 +49,7 @@ tested with C & C++ compilers
 on Windows Visual Studio MinGW Mac OSX LINUX FREEBSD ILLUMOS SOLARIS
 using Gnome Kde Enlightenment Mate Cinnamon Unity
 Lxde Lxqt Xfce WindowMaker IceWm Cde Jds
- 
+
 - License -
 
 This software is provided 'as-is', without any express or implied
@@ -212,13 +212,13 @@ int main()
 
 OSX :
 $ gcc -o main.app main.c tinyfiledialogs.c
- 
+
 UNIX :
 $ gcc -o main main.c tinyfiledialogs.c
 
 MinGW :
 > gcc -o main.exe main.c tinyfiledialogs.c -LC:/mingw/lib -lcomdlg32
- 
+
 VisualStudio :
   create a console application project
   (by default it links against Comdlg32.lib)

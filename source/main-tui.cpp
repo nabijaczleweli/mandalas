@@ -21,23 +21,28 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#pragma once
+#include <tinyfiledialogs.h>
+#include <iostream>
+#include "util/array.hpp"
+#include "generator.hpp"
 
 
-#include <SFML/Graphics.hpp>
-#include <random>
-#include <vector>
-#include <tuple>
+#ifdef _WIN32
+#define DEVNULL "NUL"
+#define DEVTTY "CON"
+#else
+#define DEVNULL "/dev/null"
+#define DEVTTY "/dev/tty"
+#endif
 
 
-class generator {
-private:
-	std::vector<sf::Vertex> past;
-	std::mt19937 rand;
+using namespace std;
 
-public:
-	generator(const sf::Vector2u & center);
 
-	void generate_n(const sf::Vector2u & maxsize, unsigned long long int n);
-	void draw_n(sf::RenderTarget & on, unsigned long long int n);
-};
+int main(int, const char ** argv) {
+	freopen(DEVNULL, "w", stderr);  // Get rid of: "INFO: Could not find files for the given pattern(s)." (no, it's not related to file patterns)
+	const auto saveto =
+	    tinyfd_saveFileDialog("Save the generated mandala to...", "mandala.png", 4, make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
+	freopen(DEVTTY, "w", stderr);
+	cout << (saveto ?: "NULL") << '\n';
+}
