@@ -19,6 +19,7 @@ foreach(ui tui gui)
 
 	add_executable(mandalas-${ui} source/main-${ui}.cpp)
 	target_link_libraries(mandalas-${ui} mandalas-lib sfml-graphics tinyfiledialogs-${ui})
+	target_include_directories(mandalas-${ui} PUBLIC external/TCLAP/include)
 	set_property(TARGET mandalas-${ui} PROPERTY CXX_STANDARD 14)
 endforeach(ui)
 target_compile_definitions(tinyfiledialogs-tui PUBLIC TINYFD_WIN_CONSOLE_ONLY)
