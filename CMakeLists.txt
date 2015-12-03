@@ -10,6 +10,9 @@ file(GLOB_RECURSE allsource source/*.cpp)
 file(GLOB mainuisource source/main-gui.cpp source/main-tui.cpp)
 list(REMOVE_ITEM  allsource ${mainuisource})
 
+execute_process(COMMAND git log -1 --date=iso "--pretty=format:%h @ %cd by %cN" OUTPUT_VARIABLE MANDALAS_VERSION)
+add_definitions(-DMANDALAS_VERSION="${MANDALAS_VERSION}")
+
 add_library(mandalas-lib STATIC ${allsource})
 target_include_directories(mandalas-lib SYSTEM PUBLIC external/SFML/include)
 set_property(TARGET mandalas-lib PROPERTY CXX_STANDARD 14)
