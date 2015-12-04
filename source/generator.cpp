@@ -53,7 +53,7 @@ static void gen(Gen && gen, mt19937 & rand, vector<Vertex> & past) {
 
 generator::generator(const Vector2u & center) : rand(random_device{}()), past(5, Vertex(static_cast<Vector2f>(center))) {}
 
-void generator::generate_n(const sf::Vector2u & maxsize, long unsigned long int n) {
+void generator::generate_n(const Vector2u & maxsize, long unsigned long int n) {
 	const auto dist = [&](auto & rand) -> Vector2u {
 		static uniform_int_distribution<unsigned int> d(0, 3);
 
@@ -77,6 +77,6 @@ void generator::generate_n(const sf::Vector2u & maxsize, long unsigned long int 
 		gen(dist, rand, past);
 }
 
-void generator::draw_n(sf::RenderTarget & on, unsigned long long int n) {
+void generator::draw_n(RenderTarget & on, unsigned long long int n) {
 	on.draw(&*(past.end() - n - 1), n, PrimitiveType::Points);
 }

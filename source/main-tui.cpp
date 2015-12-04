@@ -22,7 +22,10 @@
 
 
 #include <tinyfiledialogs.h>
+#include <tclap/CmdLine.h>
 #include <iostream>
+#include "util/suffixed_number_constraint.hpp"
+#include "util/suffixed_number_parser.hpp"
 #include "util/array.hpp"
 #include "generator.hpp"
 
@@ -37,12 +40,50 @@
 
 
 using namespace std;
+using namespace TCLAP;
 
 
-int main(int, const char ** argv) {
+struct settings_t {
+	string invocation_command;
+	string output_file;
+	unsigned long long int points_to_generate;
+};
+
+
+settings_t load_settings(int argc, const char * const * argv);
+
+
+int main(int argc, const char ** argv) {
+	const auto && settings = load_settings(argc, argv);
+
 	freopen(DEVNULL, "w", stderr);  // Get rid of: "INFO: Could not find files for the given pattern(s)." (no, it's not related to file patterns)
 	const auto saveto =
 	    tinyfd_saveFileDialog("Save the generated mandala to...", "mandala.png", 4, make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
 	freopen(DEVTTY, "w", stderr);
-	cout << (saveto ?: "NULL") << '\n';
+}
+
+
+settings_t load_settings(int argc, const char * const * argv) {
+	settings_t ret;
+	ret.invocation_command = argv[0];
+
+	try {
+		suffixed_number_constraint<unsigned long long int> points_to_generate_constraint({"h", "k", "M", "G"});
+
+		CmdLine command_line("mandalas-tui", ' ', MANDALAS_VERSION);
+		ValueArg<string> output_file("o", "output-file", "File the generated image will be output to; a prompt will be displayed otherwise", false, "",
+		                             "path to image", command_line);
+		ValueArg<string> points_to_generate("p", "points", "Amount of points to generate; can be suffixed with the standard SI suffixes", true, "0",
+		                                    &points_to_generate_constraint, command_line);
+
+		command_line.parse(argc, argv);
+
+		ret.output_file        = output_file.getValue();
+		ret.points_to_generate = parse_suffixed_number<unsigned long long int>(points_to_generate.getValue());
+	} catch(const ArgException & e) {
+		cerr << ret.invocation_command << ": error: parsing arguments failed (" << e.error() << ") for argument " << e.argId()
+		     << "\ntrying to continue anyway.\n\n";
+	}
+
+	return ret;
 }
