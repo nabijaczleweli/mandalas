@@ -21,20 +21,31 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+#include <stdexcept>
 #include <sstream>
 #include <string>
 
 
-template <class T>
-T parse_suffixed_number(const std::string & input) {
-	unsigned long long int parse_suffix(const std::string & suffix);
+using namespace std;
 
 
-	std::istringstream strm(input);
+unsigned long long int parse_suffix(const string & suff) {
+	if(suff.empty())
+		return 1;
 
-	T val;
-	strm >> val;
-	std::string suff(std::istreambuf_iterator<char>(strm), {});
+	if(suff.size() == 1)
+		switch(suff[0]) {
+			// clang-format off
+			case 'h': return 100;
+			case 'k': return 1000;
+			case 'M': return 1000000;
+			case 'G': return 1000000000ull;
+			case 'T': return 1000000000000ull;
+				// clang-format on
+		}
 
-	return val * parse_suffix(suff);
+	if(suff == "da")
+		return 10;
+
+	throw invalid_argument('"' + suff + "\" isn't one of the recognized SI suffixes");
 }

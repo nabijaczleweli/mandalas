@@ -54,7 +54,7 @@ public:
 		strm >> val;
 		std::string suff(std::istreambuf_iterator<char>(strm), {});
 
-		return std::find(possibles.begin(), possibles.end(), suff) != possibles.end();
+		return suff.empty() || std::find(possibles.begin(), possibles.end(), suff) != possibles.end();
 	}
 
 	template <class Itr>
