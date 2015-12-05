@@ -60,12 +60,25 @@ istream & operator>>(istream & strm, pair<unsigned int, unsigned int> & into);
 
 
 int main(int argc, const char ** argv) {
-	const auto && settings = load_settings(argc, argv);
+	auto && settings = load_settings(argc, argv);
 
-	freopen(DEVNULL, "w", stderr);  // Get rid of: "INFO: Could not find files for the given pattern(s)." (no, it's not related to file patterns)
-	const auto saveto =
-	    tinyfd_saveFileDialog("Save the generated mandala to...", "mandala.png", 4, make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
-	freopen(DEVTTY, "w", stderr);
+	while(!settings.output_file) {
+		freopen(DEVNULL, "w", stderr);  // Get rid of: "INFO: Could not find files for the given pattern(s)." (no, it's not related to file patterns)
+		const auto saveto =
+		    tinyfd_saveFileDialog("Save the generated mandala to...", "mandala.png", 4, make_array("*.bmp", "*.png", "*.tga", "*.jpg").data(), "image files");
+		freopen(DEVTTY, "w", stderr);
+
+		if(!saveto) {
+			cerr << "User cancelled filename prompt; aborting\n";
+			return 1;
+		}
+
+		settings.output_file.emplace(saveto);
+		if(!extensioned_path_constraint{}.check(settings.output_file.value())) {
+			cout << "Specified path doesn't contain an extension; please retry\n\n";
+			settings.output_file = nullopt;
+		}
+	}
 }
 
 
