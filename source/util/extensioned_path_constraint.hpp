@@ -21,21 +21,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "video.hpp"
-#include <algorithm>
+#pragma once
 
 
-using namespace sf;
-using namespace std;
+#include <tclap/CmdLine.h>
+#include <string>
 
 
-VideoMode max_square_video_mode() {
-	auto && desktop    = VideoMode::getDesktopMode();
-	const auto minsize = min(desktop.width, desktop.height);
-	return {minsize, minsize};
-}
+class extensioned_path_constraint : public TCLAP::Constraint<std::string> {
+public:
+	virtual std::string description() const override;
+	virtual std::string shortID() const override;
+	virtual bool check(const std::string & value) const override;
 
-pair<unsigned int, unsigned int> max_square_video_size() {
-	auto && mode = max_square_video_mode();
-	return {mode.width, mode.height};
-}
+	virtual ~extensioned_path_constraint() = default;
+};

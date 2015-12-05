@@ -25,6 +25,8 @@
 
 
 #include <SFML/Window.hpp>
+#include <utility>
 
 
 sf::VideoMode max_square_video_mode();
+std::pair<unsigned int, unsigned int> max_square_video_size();

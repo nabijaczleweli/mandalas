@@ -21,6 +21,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+#pragma once
+
+
 #include <boost/core/demangle.hpp>
 #include <tclap/CmdLine.h>
 #include <initializer_list>

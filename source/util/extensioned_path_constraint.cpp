@@ -21,21 +21,21 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include "video.hpp"
-#include <algorithm>
+#include "extensioned_path_constraint.hpp"
 
 
-using namespace sf;
 using namespace std;
 
 
-VideoMode max_square_video_mode() {
-	auto && desktop    = VideoMode::getDesktopMode();
-	const auto minsize = min(desktop.width, desktop.height);
-	return {minsize, minsize};
+string extensioned_path_constraint::description() const {
+	return "Path with extension";
 }
 
-pair<unsigned int, unsigned int> max_square_video_size() {
-	auto && mode = max_square_video_mode();
-	return {mode.width, mode.height};
+string extensioned_path_constraint::shortID() const {
+	return "extensioned_path_constraint";
+}
+
+bool extensioned_path_constraint::check(const string & value) const {
+	const auto pos = value.find('.');
+	return pos != string::npos && pos != value.size() - 1;
 }

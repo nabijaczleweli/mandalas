@@ -21,12 +21,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+#include <experimental/optional>
 #include <tinyfiledialogs.h>
 #include <tclap/CmdLine.h>
 #include <iostream>
+#include "util/extensioned_path_constraint.hpp"
 #include "util/suffixed_number_constraint.hpp"
 #include "util/suffixed_number_parser.hpp"
 #include "util/array.hpp"
+#include "util/video.hpp"
 #include "generator.hpp"
 
 
@@ -40,17 +43,20 @@
 
 
 using namespace std;
+using namespace std::experimental;
 using namespace TCLAP;
 
 
 struct settings_t {
 	string invocation_command;
-	string output_file;
+	optional<string> output_file;
+	pair<unsigned int, unsigned int> dimensions;
 	unsigned long long int points_to_generate;
 };
 
 
 settings_t load_settings(int argc, const char * const * argv);
+istream & operator>>(istream & strm, pair<unsigned int, unsigned int> & into);
 
 
 int main(int argc, const char ** argv) {
@@ -69,16 +75,19 @@ settings_t load_settings(int argc, const char * const * argv) {
 
 	try {
 		suffixed_number_constraint<unsigned long long int> points_to_generate_constraint({"h", "k", "M", "G"});
+		extensioned_path_constraint output_file_constraint;
 
-		CmdLine command_line("mandalas-tui", ' ', MANDALAS_VERSION);
+		CmdLine command_line("mandalas-tui -- the headless brother of mandalas-gui!", ' ', MANDALAS_VERSION);
+		ValueArg<pair<unsigned int, unsigned int>> dimensions("s", "size", "Output file size", false, max_square_video_size(), "NxM", command_line);
 		ValueArg<string> output_file("o", "output-file", "File the generated image will be output to; a prompt will be displayed otherwise", false, "",
-		                             "path to image", command_line);
+		                             &output_file_constraint, command_line);
 		ValueArg<string> points_to_generate("p", "points", "Amount of points to generate; can be suffixed with the standard SI suffixes", true, "0",
 		                                    &points_to_generate_constraint, command_line);
 
 		command_line.parse(argc, argv);
 
-		ret.output_file        = output_file.getValue();
+		ret.dimensions  = dimensions.getValue();
+		ret.output_file = output_file.getValue().empty() ? nullopt : make_optional(output_file.getValue());
 		ret.points_to_generate = parse_suffixed_number<unsigned long long int>(points_to_generate.getValue());
 	} catch(const ArgException & e) {
 		cerr << ret.invocation_command << ": error: parsing arguments failed (" << e.error() << ") for argument " << e.argId()
@@ -86,4 +95,17 @@ settings_t load_settings(int argc, const char * const * argv) {
 	}
 
 	return ret;
+}
+
+istream & operator>>(istream & strm, pair<unsigned int, unsigned int> & into) {
+	unsigned int x;
+	unsigned int y;
+	char temp;
+
+	strm >> x >> temp >> y;
+
+	if(temp != 'x')
+		strm.setstate(ios::failbit);
+
+	return strm;
 }
