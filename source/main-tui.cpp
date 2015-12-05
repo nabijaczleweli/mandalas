@@ -21,10 +21,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+#include <iostream>
+#include <utility>
+
+
+std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned int> & into);  // error: call to function 'operator>>' that is neither visible
+                                                                                               // in the template definition nor found by argument-dependent
+                                                                                               // lookup
+
+
 #include <experimental/optional>
 #include <tinyfiledialogs.h>
 #include <tclap/CmdLine.h>
-#include <iostream>
 #include "util/extensioned_path_constraint.hpp"
 #include "util/suffixed_number_constraint.hpp"
 #include "util/suffixed_number_parser.hpp"
@@ -56,7 +64,6 @@ struct settings_t {
 
 
 settings_t load_settings(int argc, const char * const * argv);
-istream & operator>>(istream & strm, pair<unsigned int, unsigned int> & into);
 
 
 int main(int argc, const char ** argv) {
