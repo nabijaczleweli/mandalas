@@ -25,14 +25,14 @@
 #include <utility>
 
 
-std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned int> & into);  // error: call to function 'operator>>' that is neither visible
-                                                                                               // in the template definition nor found by argument-dependent
-                                                                                               // lookup
+// error: call to function 'operator>>' that is neither visible in the template definition nor found by argument-dependent lookup
+std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned int> & into);
 
 
-#include <experimental/optional>
 #include <tinyfiledialogs.h>
 #include <tclap/CmdLine.h>
+#include <memory>
+#include <chrono>
 #include "util/extensioned_path_constraint.hpp"
 #include "util/suffixed_number_constraint.hpp"
 #include "util/suffixed_number_parser.hpp"
@@ -50,14 +50,15 @@ std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned 
 #endif
 
 
+using namespace sf;
 using namespace std;
-using namespace std::experimental;
+using namespace std::chrono;
 using namespace TCLAP;
 
 
 struct settings_t {
 	string invocation_command;
-	optional<string> output_file;
+	unique_ptr<string> output_file;
 	pair<unsigned int, unsigned int> dimensions;
 	unsigned long long int points_to_generate;
 };
@@ -80,10 +81,10 @@ int main(int argc, const char ** argv) {
 			return 1;
 		}
 
-		settings.output_file.emplace(saveto);
-		if(!extensioned_path_constraint{}.check(settings.output_file.value())) {
+		settings.output_file = make_unique<string>(saveto);
+		if(!extensioned_path_constraint{}.check(*settings.output_file)) {
 			cout << "Specified path doesn't contain an extension; please retry\n\n";
-			settings.output_file = nullopt;
+			settings.output_file = nullptr;
 		}
 	}
 }
@@ -106,8 +107,9 @@ settings_t load_settings(int argc, const char * const * argv) {
 
 		command_line.parse(argc, argv);
 
-		ret.dimensions  = dimensions.getValue();
-		ret.output_file = output_file.getValue().empty() ? nullopt : make_optional(output_file.getValue());
+		ret.dimensions = dimensions.getValue();
+		if(!output_file.getValue().empty())
+			ret.output_file = make_unique<string>(output_file.getValue());
 		ret.points_to_generate = parse_suffixed_number<unsigned long long int>(points_to_generate.getValue());
 	} catch(const ArgException & e) {
 		cerr << ret.invocation_command << ": error: parsing arguments failed (" << e.error() << ") for argument " << e.argId()
