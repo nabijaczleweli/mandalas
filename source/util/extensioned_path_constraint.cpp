@@ -32,7 +32,7 @@ string extensioned_path_constraint::description() const {
 }
 
 string extensioned_path_constraint::shortID() const {
-	return "extensioned_path_constraint";
+	return "Path with extension";
 }
 
 bool extensioned_path_constraint::check(const string & value) const {
