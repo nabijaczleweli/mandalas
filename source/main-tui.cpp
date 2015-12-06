@@ -49,6 +49,12 @@ std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned 
 #define DEVTTY "/dev/tty"
 #endif
 
+#define QUIET(settings, stream, ...) \
+	do {                               \
+		if(!settings.quiet)              \
+			(stream) << __VA_ARGS__;       \
+	} while(0)
+
 
 using namespace sf;
 using namespace std;
@@ -78,15 +84,13 @@ int main(int argc, const char ** argv) {
 		freopen(DEVTTY, "w", stderr);
 
 		if(!saveto) {
-			if(!settings.quiet)
-				cerr << "User cancelled filename prompt; aborting\n";
+			QUIET(settings, cerr, "User cancelled filename prompt; aborting\n");
 			return 1;
 		}
 
 		settings.output_file = make_unique<string>(saveto);
 		if(!extensioned_path_constraint{}.check(*settings.output_file)) {
-			if(!settings.quiet)
-				cout << "Specified path doesn't contain an extension; please retry\n\n";
+			QUIET(settings, cout, "Specified path doesn't contain an extension; please retry\n\n");
 			settings.output_file = nullptr;
 		}
 	}
@@ -102,11 +106,11 @@ int main(int argc, const char ** argv) {
 		gen.draw_n(img, settings.points_to_generate);
 	}
 	auto end = high_resolution_clock::now();
-	if(!settings.quiet)
-		cout << "Generated " << settings.points_to_generate << " points in " << duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
+	QUIET(settings, cout, "Generated " << settings.points_to_generate << " points in " << duration_cast<std::chrono::milliseconds>(end - start).count()
+	                                   << "ms\n");
 
-	if(!img.getTexture().copyToImage().saveToFile(*settings.output_file) && !settings.quiet)
-		cerr << "Saving \"" << *settings.output_file << "\" failed.\n";
+	if(!img.getTexture().copyToImage().saveToFile(*settings.output_file))
+		QUIET(settings, cerr, "Saving \"" << *settings.output_file << "\" failed.\n");
 }
 
 
