@@ -61,6 +61,7 @@ struct settings_t {
 	unique_ptr<string> output_file;
 	pair<unsigned int, unsigned int> dimensions;
 	unsigned long long int points_to_generate;
+	bool quiet;
 };
 
 
@@ -77,16 +78,35 @@ int main(int argc, const char ** argv) {
 		freopen(DEVTTY, "w", stderr);
 
 		if(!saveto) {
-			cerr << "User cancelled filename prompt; aborting\n";
+			if(!settings.quiet)
+				cerr << "User cancelled filename prompt; aborting\n";
 			return 1;
 		}
 
 		settings.output_file = make_unique<string>(saveto);
 		if(!extensioned_path_constraint{}.check(*settings.output_file)) {
-			cout << "Specified path doesn't contain an extension; please retry\n\n";
+			if(!settings.quiet)
+				cout << "Specified path doesn't contain an extension; please retry\n\n";
 			settings.output_file = nullptr;
 		}
 	}
+
+	RenderTexture img;
+	img.create(settings.dimensions.first, settings.dimensions.second);
+	img.clear();
+
+	auto start = high_resolution_clock::now();
+	{  // generator allocates a *lot* of memory, alright
+		generator gen(img.getSize() / 2u);
+		gen.generate_n(img.getSize(), settings.points_to_generate);
+		gen.draw_n(img, settings.points_to_generate);
+	}
+	auto end = high_resolution_clock::now();
+	if(!settings.quiet)
+		cout << "Generated " << settings.points_to_generate << " points in " << duration_cast<std::chrono::milliseconds>(end - start).count() << "ms\n";
+
+	if(!img.getTexture().copyToImage().saveToFile(*settings.output_file) && !settings.quiet)
+		cerr << "Saving \"" << *settings.output_file << "\" failed.\n";
 }
 
 
@@ -104,6 +124,7 @@ settings_t load_settings(int argc, const char * const * argv) {
 		                             &output_file_constraint, command_line);
 		ValueArg<string> points_to_generate("p", "points", "Amount of points to generate; can be suffixed with the standard SI suffixes", true, "0",
 		                                    &points_to_generate_constraint, command_line);
+		SwitchArg quiet("q", "quiet", "Don't print things", command_line);
 
 		command_line.parse(argc, argv);
 
@@ -111,9 +132,11 @@ settings_t load_settings(int argc, const char * const * argv) {
 		if(!output_file.getValue().empty())
 			ret.output_file = make_unique<string>(output_file.getValue());
 		ret.points_to_generate = parse_suffixed_number<unsigned long long int>(points_to_generate.getValue());
+		ret.quiet = quiet.getValue();
 	} catch(const ArgException & e) {
-		cerr << ret.invocation_command << ": error: parsing arguments failed (" << e.error() << ") for argument " << e.argId()
-		     << "\ntrying to continue anyway.\n\n";
+		if(!ret.quiet)
+			cerr << ret.invocation_command << ": error: parsing arguments failed (" << e.error() << ") for argument " << e.argId()
+			     << "\ntrying to continue anyway.\n\n";
 	}
 
 	return ret;
