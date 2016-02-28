@@ -123,7 +123,8 @@ settings_t load_settings(int argc, const char * const * argv) {
 		extensioned_path_constraint output_file_constraint;
 
 		CmdLine command_line("mandalas-tui -- the headless brother of mandalas-gui!", ' ', MANDALAS_VERSION);
-		ValueArg<pair<unsigned int, unsigned int>> dimensions("s", "size", "Output file size", false, max_square_video_size(), "NxM", command_line);
+		ValueArg<unsigned int> dimensions_h("", "horizontal-size", "Output file height", false, max_square_video_size().first, "N", command_line);
+		ValueArg<unsigned int> dimensions_w("", "vertical-size", "Output file width", false, max_square_video_size().second, "M", command_line);
 		ValueArg<string> output_file("o", "output-file", "File the generated image will be output to; a prompt will be displayed otherwise", false, "",
 		                             &output_file_constraint, command_line);
 		ValueArg<string> points_to_generate("p", "points", "Amount of points to generate; can be suffixed with the standard SI suffixes", true, "0",
@@ -132,7 +133,7 @@ settings_t load_settings(int argc, const char * const * argv) {
 
 		command_line.parse(argc, argv);
 
-		ret.dimensions = dimensions.getValue();
+		ret.dimensions = {dimensions_h.getValue(), dimensions_w.getValue()};
 		if(!output_file.getValue().empty())
 			ret.output_file = make_unique<string>(output_file.getValue());
 		ret.points_to_generate = parse_suffixed_number<unsigned long long int>(points_to_generate.getValue());
@@ -144,17 +145,4 @@ settings_t load_settings(int argc, const char * const * argv) {
 	}
 
 	return ret;
-}
-
-istream & operator>>(istream & strm, pair<unsigned int, unsigned int> & into) {
-	unsigned int x;
-	unsigned int y;
-	char temp;
-
-	strm >> x >> temp >> y;
-
-	if(temp != 'x')
-		strm.setstate(ios::failbit);
-
-	return strm;
 }

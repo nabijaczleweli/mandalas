@@ -28,6 +28,6 @@ foreach(ui tui gui)
 endforeach(ui)
 target_compile_definitions(tinyfiledialogs-tui PUBLIC TINYFD_WIN_CONSOLE_ONLY)
 
-set(CXX_COMPILE_FLAGS ${CXX_COMPILE_FLAGS} -O3 -Wall -Wextra)
+set(CXX_COMPILE_FLAGS ${CXX_COMPILE_FLAGS} -Ofast -Wall -Wextra)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
