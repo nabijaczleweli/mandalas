@@ -4,3 +4,6 @@
 [submodule "TCLAP"]
 	path = external/TCLAP
 	url = https://github.com/Qointum/tclap.git
+[submodule "external/progressbar"]
+	path = external/progressbar
+	url = https://github.com/nabijaczleweli/progressbar.git
