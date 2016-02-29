@@ -36,6 +36,7 @@ std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned 
 #include "util/extensioned_path_constraint.hpp"
 #include "util/suffixed_number_constraint.hpp"
 #include "util/suffixed_number_parser.hpp"
+#include "util/nonzero_number_constraint.hpp"
 #include "util/array.hpp"
 #include "util/video.hpp"
 #include "generator.hpp"
@@ -67,6 +68,7 @@ struct settings_t {
 	unique_ptr<string> output_file;
 	pair<unsigned int, unsigned int> dimensions;
 	unsigned long long int points_to_generate;
+	unsigned int parts;
 	bool quiet;
 };
 
@@ -120,6 +122,7 @@ settings_t load_settings(int argc, const char * const * argv) {
 
 	try {
 		suffixed_number_constraint<unsigned long long int> points_to_generate_constraint({"h", "k", "M", "G"});
+		nonzero_number_constraint<unsigned int> parts_constraint;
 		extensioned_path_constraint output_file_constraint;
 
 		CmdLine command_line("mandalas-tui -- the headless brother of mandalas-gui!", ' ', MANDALAS_VERSION);
@@ -129,6 +132,7 @@ settings_t load_settings(int argc, const char * const * argv) {
 		                             &output_file_constraint, command_line);
 		ValueArg<string> points_to_generate("p", "points", "Amount of points to generate; can be suffixed with the standard SI suffixes", true, "0",
 		                                    &points_to_generate_constraint, command_line);
+		ValueArg<unsigned int> parts("n", "parts", "Amounts of chunks to generate points in", false, 1u, &parts_constraint, command_line);
 		SwitchArg quiet("q", "quiet", "Don't print things", command_line);
 
 		command_line.parse(argc, argv);
@@ -137,6 +141,7 @@ settings_t load_settings(int argc, const char * const * argv) {
 		if(!output_file.getValue().empty())
 			ret.output_file = make_unique<string>(output_file.getValue());
 		ret.points_to_generate = parse_suffixed_number<unsigned long long int>(points_to_generate.getValue());
+		ret.parts = parts.getValue();
 		ret.quiet = quiet.getValue();
 	} catch(const ArgException & e) {
 		if(!ret.quiet)
