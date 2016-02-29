@@ -21,16 +21,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-#include <iostream>
-#include <utility>
-
-
-// error: call to function 'operator>>' that is neither visible in the template definition nor found by argument-dependent lookup
-std::istream & operator>>(std::istream & strm, std::pair<unsigned int, unsigned int> & into);
-
-
 #include <tinyfiledialogs.h>
 #include <tclap/CmdLine.h>
+#include <iostream>
+#include <utility>
 #include <memory>
 #include <chrono>
 #include "util/extensioned_path_constraint.hpp"
@@ -102,10 +96,9 @@ int main(int argc, const char ** argv) {
 	img.clear();
 
 	auto start = high_resolution_clock::now();
-	{  // generator allocates a *lot* of memory, alright
+	{
 		generator gen(img.getSize() / 2u);
-		gen.generate_n(img.getSize(), settings.points_to_generate);
-		gen.draw_n(img, settings.points_to_generate);
+		gen.generate_and_draw(img.getSize(), img, settings.points_to_generate, settings.parts);
 	}
 	auto end = high_resolution_clock::now();
 	QUIET(settings, cout, "Generated " << settings.points_to_generate << " points in " << duration_cast<std::chrono::milliseconds>(end - start).count()

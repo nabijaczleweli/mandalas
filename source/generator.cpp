@@ -22,13 +22,22 @@
 
 
 #include "generator.hpp"
+#include <progressbar.h>
 #include "util/math.hpp"
 #include "util/array.hpp"
 #include <algorithm>
+#include <memory>
 
 
 using namespace sf;
 using namespace std;
+
+
+struct progresssbar_deleter {
+	void operator()(progressbar * pb) {
+		progressbar_finish(pb);
+	}
+};
 
 
 template <class Gen>
@@ -71,7 +80,7 @@ void generator::generate_n(const Vector2u & maxsize, long unsigned long int n) {
 		}
 	};
 
-	past.reserve(past.capacity() + n);
+	past.reserve(n + 5);
 
 	for(auto i = 0ull; i < n; ++i)
 		gen(dist, rand, past);
@@ -79,4 +88,22 @@ void generator::generate_n(const Vector2u & maxsize, long unsigned long int n) {
 
 void generator::draw_n(RenderTarget & on, unsigned long long int n) {
 	on.draw(&*(past.end() - n - 1), n, PrimitiveType::Points);
+}
+
+void generator::generate_and_draw(const sf::Vector2u & maxsize, sf::RenderTarget & on, unsigned long long int n, unsigned int groups) {
+	if(groups == 1) {
+		generate_n(maxsize, n);
+		draw_n(on, n);
+	} else {
+		unique_ptr<progressbar, progresssbar_deleter> pb(progressbar_new("Chunked generation", groups));
+		for(auto i = 0u; i < groups; ++i) {
+			generate_n(maxsize, n / groups);
+			draw_n(on, n / groups);
+
+			progressbar_inc(pb.get());
+
+			move(past.end() - 5, past.end(), past.begin());
+			past.resize(5);
+		}
+	}
 }

@@ -40,4 +40,6 @@ public:
 
 	void generate_n(const sf::Vector2u & maxsize, unsigned long long int n);
 	void draw_n(sf::RenderTarget & on, unsigned long long int n);
+
+	void generate_and_draw(const sf::Vector2u & maxsize, sf::RenderTarget & on, unsigned long long int n, unsigned int groups);
 };
