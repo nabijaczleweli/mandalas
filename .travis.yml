@@ -36,23 +36,15 @@ matrix:
             - libxcb-image0-dev
             - libxcb-randr0-dev
           sources: *sources
-    - os: osx
-      language: cpp
-      compiler: gcc
-    - os: osx
-      language: cpp
-      compiler: clang
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH="$HOME/bin:$PATH"; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then mkdir -p ~/bin /tmp/tools; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then wget --no-check-certificate --no-clobber -O /tmp/tools/cmake https://cmake.org/files/v3.4/cmake-3.4.0-rc3-Linux-x86_64.sh || true; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then chmod -R +x /tmp/tools; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+  - export PATH="$HOME/bin:$PATH"
+  - mkdir -p ~/bin /tmp/tools
+  - wget --no-check-certificate --no-clobber -O /tmp/tools/cmake https://cmake.org/files/v3.5/cmake-3.5.0-rc3-Linux-x86_64.sh || true
+  - chmod -R +x /tmp/tools
 
 install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then /tmp/tools/cmake --prefix="$HOME" --exclude-subdir; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew outdated cmake || brew upgrade cmake; fi
+  - /tmp/tools/cmake --prefix="$HOME" --exclude-subdir
 
 before_script :
   - mkdir build
