@@ -23,6 +23,7 @@
 
 #include "generator.hpp"
 #include <progressbar.h>
+#include <seed11/seed_device.hpp>
 #include "util/math.hpp"
 #include "util/array.hpp"
 #include <algorithm>
@@ -60,7 +61,7 @@ static void gen(Gen && gen, mt19937 & rand, vector<Vertex> & past) {
 	past.emplace_back(pos, col);
 }
 
-generator::generator(const Vector2u & center) : rand(random_device{}()), past(5, Vertex(static_cast<Vector2f>(center))) {}
+generator::generator(const Vector2u & center) : rand(seed11::seed_device{}()), past(5, Vertex(static_cast<Vector2f>(center))) {}
 
 void generator::generate_n(const Vector2u & maxsize, long unsigned long int n) {
 	const auto dist = [&](auto & rand) -> Vector2u {
